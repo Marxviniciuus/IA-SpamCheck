@@ -1,17 +1,10 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import numpy as np
 import re, string
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.stem import SnowballStemmer
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
-import gensim
-from gensim.models import Word2Vec
 
 wl = WordNetLemmatizer()
 
@@ -26,7 +19,7 @@ def preprocess(text: str) -> str:
     text = text.strip()
     text = re.compile('<.*?>').sub('', text)
     text = re.compile('[%s]' % re.escape(string.punctuation)).sub(' ', text)
-    text = re.sub('\s+', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
     text = re.sub(r'\[[0-9]*\]',' ',text)
     text = re.sub(r'[^\w\s]', '', str(text).lower().strip())
     text = re.sub(r'\d',' ',text)
