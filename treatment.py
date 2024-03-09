@@ -13,4 +13,3 @@ def getTreatedData():
     y = df['Category']
 
     return train_test_split(X, y, test_size=0.2, random_state=42)
-
