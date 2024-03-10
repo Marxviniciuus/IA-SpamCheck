@@ -4,7 +4,7 @@ import pandas as pd
 
 from utils.preprocess import finalpreprocess
 
-def getTreatedData():
+def get_treated_data():
     df = pd.read_csv('spam.csv')
     df['Message'] = df['Message'].apply(lambda x: finalpreprocess(x))
     df['Category'] = df['Category'].map({'ham': 0, 'spam': 1})
