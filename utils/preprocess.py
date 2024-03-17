@@ -1,10 +1,13 @@
 import re, string
 import nltk
 from nltk.tokenize import word_tokenize
+from nltk.metrics import jaccard_distance
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 wl = WordNetLemmatizer()
 
@@ -26,6 +29,32 @@ def preprocess(text: str) -> str:
     text = re.sub(r'\s+',' ',text)
 
     return text
+
+
+def jaccard_similarity(text1, text2):
+    tokens1 = set(word_tokenize(text1.lower()))
+    tokens2 = set(word_tokenize(text2.lower()))
+    jaccard_sim = 1 - jaccard_distance(tokens1, tokens2)
+    return jaccard_sim
+
+
+def clean_similar_texts(df):
+    similarity_threshold = 0.8
+    
+    tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tfidf_vectorizer.fit_transform(df['Message'])
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+    index_to_remove = set()
+
+    for i in range(len(cosine_sim)):
+        for j in range(i+1, len(cosine_sim)):
+            if cosine_sim[i][j] > similarity_threshold:
+                index_to_remove.add(j)
+
+    df_cleaned = df.drop(index_to_remove)
+
+    return df_cleaned
 
 
 def stopword(text: str) -> str:
