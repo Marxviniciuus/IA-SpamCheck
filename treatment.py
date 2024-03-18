@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
-from utils.preprocess import clean_similar_texts, finalpreprocess
+from utils.preprocess import clean_similar_texts, finalpreprocess, generate_oversampled_data
 
 def get_treated_data():
     df1 = pd.read_csv('spam.csv')
@@ -15,6 +15,7 @@ def get_treated_data():
     
     df = pd.concat([df1, df2], ignore_index=True)
     df = clean_similar_texts(df)
+    df = generate_oversampled_data(df)
 
     df['Message'] = df['Message'].apply(lambda x: finalpreprocess(x))
 

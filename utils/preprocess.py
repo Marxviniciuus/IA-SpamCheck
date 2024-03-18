@@ -1,3 +1,4 @@
+import pandas as pd
 import re, string
 import nltk
 from nltk.tokenize import word_tokenize
@@ -8,6 +9,7 @@ from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.utils import resample
 
 wl = WordNetLemmatizer()
 
@@ -55,6 +57,20 @@ def clean_similar_texts(df):
     df_cleaned = df.drop(index_to_remove)
 
     return df_cleaned
+
+
+def generate_oversampled_data(df):
+    df_majority = df[df['Category']==0]
+    df_minority = df[df['Category']==1]
+
+    df_minority_oversampled = resample(df_minority,
+                                   replace=True,
+                                   n_samples=len(df_majority),
+                                   random_state=42)
+
+    df_oversampled = pd.concat([df_majority, df_minority_oversampled])
+
+    return df_oversampled
 
 
 def stopword(text: str) -> str:
