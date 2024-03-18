@@ -4,7 +4,8 @@ import pandas as pd
 
 from utils.preprocess import clean_similar_texts, finalpreprocess, generate_oversampled_data
 
-def get_treated_data():
+
+def get_grouped_data():
     df1 = pd.read_csv('spam.csv')
     df1['Category'] = df1['Category'].map({'ham': 0, 'spam': 1})
     df1 = df1.dropna(subset=['Message'])
@@ -16,6 +17,8 @@ def get_treated_data():
     df = pd.concat([df1, df2], ignore_index=True)
     df = clean_similar_texts(df)
     df = generate_oversampled_data(df)
+    
+    # print(df['Category'].value_counts())
 
     df['Message'] = df['Message'].apply(lambda x: finalpreprocess(x))
 
@@ -23,4 +26,16 @@ def get_treated_data():
     X = tfidf.fit_transform(df['Message'])
     y = df['Category']
 
+    return X, y
+
+
+def get_treated_data():
+    X, y = get_grouped_data()
+
     return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+def get_ml_treated_data():
+    X, y = get_grouped_data()
+
+    return train_test_split(X.toarray(), y, test_size=0.2, random_state=42)
